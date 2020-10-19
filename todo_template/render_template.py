@@ -1,3 +1,4 @@
+#!/usr/bin/env python 
 # Standard library imports.
 from datetime import datetime, timedelta
 
