@@ -35,6 +35,7 @@ class TodoTemplate():
         with open(f'{todo_dates["title_date"]}_weekly_todo.md', 'w') as fh:
             fh.write(render)
 
+    # def render_template(self, config, )
 
 if __name__ == "__main__":
     todo = TodoTemplate()
