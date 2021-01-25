@@ -1,0 +1,49 @@
+name: 'Todo Template'
+
+# Fix me to schedule
+on:
+  push:
+    branches:
+
+jobs:
+  html_template:
+    name: 'Create MD Template'
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v2
+      # Install the required version of Python
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      # Install the required version of Poetry
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.0.10
+      # Use Poetry to create a virtual environment and install required packages
+      - name: Install Poetry venv
+        run: poetry install --no-dev
+      # Run the Python script to render the HTML template
+      - name: Create HTML Templete
+        run: poetry run  ./homepage_index/make_index.py
+      # Upload the rendered template as an artifact for use in future steps
+      - uses: actions/upload-artifact@v2
+        with:
+          name: index
+          path: index.html
+
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    container:
+        image: alpine/terragrunt:latest
+    # Wait for html_template job to run so that artifact is ready
+    needs: html_template
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
