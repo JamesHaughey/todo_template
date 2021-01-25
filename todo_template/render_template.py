@@ -1,6 +1,7 @@
 #!/usr/bin/env python 
 # Standard library imports.
 from datetime import datetime, timedelta
+from pathlib import Path
 
 # Related third party imports.
 from jinja2 import Environment, FileSystemLoader, select_autoescape, Template, PackageLoader
@@ -27,12 +28,19 @@ class TodoTemplate():
             'wednesday_date': (monday+timedelta(days=2)).strftime(daily_fmt),
             'thursday_date': (monday+timedelta(days=3)).strftime(daily_fmt),
             'friday_date': (monday+timedelta(days=4)).strftime(daily_fmt),
+            'year': monday.strftime('%Y'),
+            'month': monday.strftime('%m'),
         }
 
     def render_today_template(self):
         todo_dates = self.return_date_dict() 
         render = self._template.render(config=todo_dates)
-        with open(f'{todo_dates["title_date"]}_weekly_todo.md', 'w') as fh:
+        folder = f'{todo_dates["year"]}/{todo_dates["month"]}'
+        todo_folder_path = Path(f'{folder}')
+        todo_folder_path.mkdir(parents=True, exist_ok=True)
+        todo_path = todo_folder_path / f'{todo_dates["title_date"]}_weekly_todo.md'
+        
+        with todo_path.open('w') as fh:
             fh.write(render)
 
     # def render_template(self, config, )
